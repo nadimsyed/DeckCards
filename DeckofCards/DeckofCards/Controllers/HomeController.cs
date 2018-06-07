@@ -45,6 +45,7 @@ namespace DeckofCards.Controllers
             {
                 JObject JsonData = JObject.Parse(CardData);
                 ViewBag.DeckId = JsonData["deck_id"];
+                ViewBag.Remain = JsonData["remaining"];
                 //Session["x"] = ViewBag.DeckId;
                 //string sess = (string)Session["x"];
                 //id = (string)JsonData["deck_id"];
@@ -59,7 +60,10 @@ namespace DeckofCards.Controllers
                 id = ViewBag.DeckId;
                 url = $"https://deckofcardsapi.com/api/deck/{ViewBag.DeckId}/draw/?count=5";
                 Response.Cookies["Link"].Value = url;
+                Response.Cookies["Id"].Value = ViewBag.DeckId;
                 Response.Cookies["Link"].Expires = DateTime.Now.AddMinutes(2);
+                Response.Cookies["Id"].Expires = DateTime.Now.AddMinutes(2);
+
                 //myCookie.Expires = DateTime.Now.AddHours(12);
                 //HttpResponse.AppendCookie(myCookie);
 
@@ -187,11 +191,86 @@ namespace DeckofCards.Controllers
         }
         
 
-        public ActionResult Contact()
+        public ActionResult Shuffle()
         {
-            ViewBag.Message = "Your contact page.";
+            var Id = Request.Cookies["Id"].Value;
+            //use an if statement to discard of web request post using
+            HttpWebRequest WR4 = WebRequest.CreateHttp($"https://deckofcardsapi.com/api/deck/{Id}/shuffle/");
+            WR4.UserAgent = ".NET Framework Test Client";
 
-            return View();
+            HttpWebResponse Response4;
+
+            try
+            {
+                Response4 = (HttpWebResponse)WR4.GetResponse();
+            }
+            catch (WebException ex2)
+            {
+                ViewBag.Error4 = "Exception";
+                ViewBag.ErrorDescription4 = ex2.Message;
+                return View("Index");
+            }
+
+            if (Response4.StatusCode != HttpStatusCode.OK)
+            {
+                ViewBag.Error4 = Response4.StatusCode;
+                ViewBag.ErrorDescription4 = Response4.StatusDescription;
+                return View("Index");
+            }
+
+            StreamReader reader4 = new StreamReader(Response4.GetResponseStream());
+            string Card4Data = reader4.ReadToEnd();
+
+            try
+            {
+                var input = Request.Cookies["Link"] != null ? Request.Cookies["Link"].Value : String.Empty;
+
+                HttpWebRequest WR2 = WebRequest.CreateHttp($"{input}");
+                WR2.UserAgent = ".NET Framework Test Client";
+
+                HttpWebResponse Response2;
+
+                try
+                {
+                    Response2 = (HttpWebResponse)WR2.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    ViewBag.Error2 = "Exception";
+                    ViewBag.ErrorDescription2 = ex.Message;
+                    return View("Index");
+                }
+
+                if (Response2.StatusCode != HttpStatusCode.OK)
+                {
+                    ViewBag.Error2 = Response2.StatusCode;
+                    ViewBag.ErrorDescription2 = Response2.StatusDescription;
+                    return View("Index");
+                }
+
+                StreamReader reader2 = new StreamReader(Response2.GetResponseStream());
+                string Card2Data = reader2.ReadToEnd();
+
+                try
+                {
+                    JObject Json2Data = JObject.Parse(Card2Data);
+                    ViewBag.Cards = /*(JObject)*/Json2Data["cards"];
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error2 = "JSON Issue";
+                    ViewBag.ErrorDescription2 = ex.Message;
+                    return View("Index");
+                }
+            }
+            catch (Exception ex2)
+            {
+                ViewBag.Error4 = "JSON Issue";
+                ViewBag.ErrorDescription4 = ex2.Message;
+                return View("Index");
+            }
+
+            return View("Index");
         }
 
 
