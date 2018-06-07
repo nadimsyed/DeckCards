@@ -6,14 +6,20 @@
 
 @*can use form or something like peter showed in his code to keep the viewbag value*@
 @*<h3>@ViewBag.Remain</h3>*@
-<table class="table table-bordered table-striped" @*onload="~/Home/Draw/"*@>
+@*<h1>@ViewBag.bob</h1>
+<h2>@ViewBag.Error</h2>
+@ViewBag.ErrorDescription*@
+
+
+        <table class="table table-bordered table-striped" >
+        <!--onload="~/Home/Draw/"-->
     <tr>
         <th width="70%">Image</th>
         <th width="30%">Name</th>
     </tr>
     @for (int i = 0; i < ViewBag.Cards.Count; i++)
     {
-        <tr>
+        <tr>/////
             <td>
                 <img src="@ViewBag.Cards[i]["image"]"
                      height="440" width="350" />
@@ -23,9 +29,10 @@
             </td>
         </tr>
     }
-</table>
+    </table>
+\
 
-<a href="~/Home/Draw/" class="btn btn-default">Draw 5</a> <a href="~/Home/Index/" class="btn btn-default" style="margin-left:837px">Draw from a new Deck when Cards Run Out</a>
+<a href="~/Home/Draw/" class="btn btn-default">Draw 5</a> <a href="~/Home/Shuffle/" class="btn btn-default" style="margin-left:837px">Draw from a new Deck when Cards Run Out</a>
 @*<tr>
         <td>
             <img src="@ViewBag.Images2"

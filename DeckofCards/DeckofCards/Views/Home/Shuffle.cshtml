@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Shuffle";
+}
+
+<h2>@ViewBag.Error2</h2>
+@ViewBag.ErrorDescription2
+
+<table class="table table-bordered table-striped" @*onload="~/Home/Draw/"*@>
+    <tr>
+        <th width="70%">Image</th>
+        <th width="30%">Name</th>
+    </tr>
+    @*    @for (int i = 0; i < ViewBag.Cards.Count; i++)
+        {
+            <tr>
+                <td>
+                    <img src="@ViewBag.Cards[i]["image"]"
+                         height="440" width="350" />
+                </td>
+                <td>
+                    @ViewBag.Cards[i]["value"] OF @ViewBag.Cards[i]["suit"]
+                </td>
+            </tr>
+        }*@
+</table>
+
+<a href="~/Home/Draw/" class="btn btn-default">Draw 5</a> <a href="~/Home/Index/" class="btn btn-default" style="margin-left:837px">Draw from a new Deck when Cards Run Out</a>
+

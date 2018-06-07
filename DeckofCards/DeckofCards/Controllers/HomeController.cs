@@ -60,9 +60,9 @@ namespace DeckofCards.Controllers
                 id = ViewBag.DeckId;
                 url = $"https://deckofcardsapi.com/api/deck/{ViewBag.DeckId}/draw/?count=5";
                 Response.Cookies["Link"].Value = url;
-                Response.Cookies["Id"].Value = ViewBag.DeckId;
+                Response.Cookies["DeckIdCookie"].Value = ViewBag.DeckId;
                 Response.Cookies["Link"].Expires = DateTime.Now.AddMinutes(2);
-                Response.Cookies["Id"].Expires = DateTime.Now.AddMinutes(2);
+                Response.Cookies["DeckIdCookie"].Expires = DateTime.Now.AddMinutes(2);
 
                 //myCookie.Expires = DateTime.Now.AddHours(12);
                 //HttpResponse.AppendCookie(myCookie);
@@ -147,6 +147,9 @@ namespace DeckofCards.Controllers
             
         public ActionResult Draw()
         {
+            string DeckIdCookie = Request.Cookies["DeckIdCookie"].Value;
+            ViewBag.bob = DeckIdCookie;
+
             var input = Request.Cookies["Link"] != null ? Request.Cookies["Link"].Value : String.Empty;
 
             HttpWebRequest WR2 = WebRequest.CreateHttp($"{input}");
@@ -193,9 +196,10 @@ namespace DeckofCards.Controllers
 
         public ActionResult Shuffle()
         {
-            var Id = Request.Cookies["Id"].Value;
+            string DeckIdCookie = Request.Cookies["DeckIdCookie"].Value;
             //use an if statement to discard of web request post using
-            HttpWebRequest WR4 = WebRequest.CreateHttp($"https://deckofcardsapi.com/api/deck/{Id}/shuffle/");
+            
+            HttpWebRequest WR4 = WebRequest.CreateHttp($"https://deckofcardsapi.com/api/deck/{DeckIdCookie}/shuffle/");
             WR4.UserAgent = ".NET Framework Test Client";
 
             HttpWebResponse Response4;
@@ -206,15 +210,15 @@ namespace DeckofCards.Controllers
             }
             catch (WebException ex2)
             {
-                ViewBag.Error4 = "Exception";
-                ViewBag.ErrorDescription4 = ex2.Message;
+                ViewBag.Error = "Exception stage 1";
+                ViewBag.ErrorDescription = ex2.Message  +$"<br />https://deckofcardsapi.com/api/deck/{DeckIdCookie}/shuffle/";
                 return View("Index");
             }
 
             if (Response4.StatusCode != HttpStatusCode.OK)
             {
-                ViewBag.Error4 = Response4.StatusCode;
-                ViewBag.ErrorDescription4 = Response4.StatusDescription;
+                ViewBag.Error = Response4.StatusCode;
+                ViewBag.ErrorDescription = Response4.StatusDescription;
                 return View("Index");
             }
 
@@ -236,15 +240,15 @@ namespace DeckofCards.Controllers
                 }
                 catch (WebException ex)
                 {
-                    ViewBag.Error2 = "Exception";
-                    ViewBag.ErrorDescription2 = ex.Message;
+                    ViewBag.Error = "Exception stage 2";
+                    ViewBag.ErrorDescription = ex.Message;
                     return View("Index");
                 }
 
                 if (Response2.StatusCode != HttpStatusCode.OK)
                 {
-                    ViewBag.Error2 = Response2.StatusCode;
-                    ViewBag.ErrorDescription2 = Response2.StatusDescription;
+                    ViewBag.Error = Response2.StatusCode;
+                    ViewBag.ErrorDescription = Response2.StatusDescription;
                     return View("Index");
                 }
 
@@ -258,15 +262,15 @@ namespace DeckofCards.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewBag.Error2 = "JSON Issue";
-                    ViewBag.ErrorDescription2 = ex.Message;
+                    ViewBag.Error = "JSON Issue";
+                    ViewBag.ErrorDescription = ex.Message;
                     return View("Index");
                 }
             }
             catch (Exception ex2)
             {
-                ViewBag.Error4 = "JSON Issue";
-                ViewBag.ErrorDescription4 = ex2.Message;
+                ViewBag.Error = "JSON Issue 2";
+                ViewBag.ErrorDescription = ex2.Message;
                 return View("Index");
             }
 
