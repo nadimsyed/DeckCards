@@ -59,6 +59,7 @@ namespace DeckofCards.Controllers
                 id = ViewBag.DeckId;
                 url = $"https://deckofcardsapi.com/api/deck/{ViewBag.DeckId}/draw/?count=5";
                 Response.Cookies["Link"].Value = url;
+                Response.Cookies["Link"].Expires = DateTime.Now.AddMinutes(2);
                 //myCookie.Expires = DateTime.Now.AddHours(12);
                 //HttpResponse.AppendCookie(myCookie);
 
